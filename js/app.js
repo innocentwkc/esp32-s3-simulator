@@ -35,11 +35,286 @@ const PIN_TYPE_COLOR = {
   gnd:      '#7f8c8d',
   gpio:     '#00d4aa',
   ctrl:     '#ffd700',
-  psram:    '#ff6b00',  // orange — reserved by Octal PSRAM (N16R8)
 };
 
+// ================================================================
+// ESP32-S3 AUTHORITATIVE GPIO CAPABILITY TABLE
+// Source of truth: Official ESP32-S3-DevKitC-1 pinout diagram
+// All GPIO numbers and functions match the diagram exactly.
+// ================================================================
+const GPIO_CAPABILITIES = [
+  // ── RTC-domain GPIOs (0–21) ────────────────────────────────────
+
+  { gpio: 0,  input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: true,
+    notes: ['BOOT strapping pin — LOW enters download mode'] },
+
+  { gpio: 1,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 0 }, touch: 1, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 2,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 1 }, touch: 2, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 3,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 2 }, touch: 3, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: 'JTAG',
+    clockOutput: null, usb: null, strap: true,
+    notes: ['Strapping pin — selects JTAG signal source'] },
+
+  { gpio: 4,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 3 }, touch: 4, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 5,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 4 }, touch: 5, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 6,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 5 }, touch: 6, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 7,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 6 }, touch: 7, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 8,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 7 }, touch: 8, rtc: true,
+    uart: [], spi: ['SUBSPICS1'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 9,  input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 8 }, touch: 9, rtc: true,
+    uart: [], spi: ['FSPIHD', 'SUBSPIHD'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 10, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC1', channel: 9 }, touch: 10, rtc: true,
+    uart: [], spi: ['FSPICS0', 'SUBSPICS0'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 11, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 0 }, touch: 11, rtc: true,
+    uart: [], spi: ['FSPID', 'SUBSPID'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 12, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 1 }, touch: 12, rtc: true,
+    uart: [], spi: ['FSPICLK', 'SUBSPICLK'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 13, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 2 }, touch: 13, rtc: true,
+    uart: [], spi: ['FSPIQ', 'SUBSPIQ'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 14, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 3 }, touch: 14, rtc: true,
+    uart: [], spi: ['FSPIWP', 'SUBSPIWP'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  // ── ADC2 GPIOs with UART / crystal / USB ───────────────────────
+
+  { gpio: 15, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 4 }, touch: null, rtc: true,
+    uart: ['U0RTS'], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false,
+    notes: ['XTAL_32K_P — 32.768 kHz crystal'] },
+
+  { gpio: 16, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 5 }, touch: null, rtc: true,
+    uart: ['U0CTS'], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false,
+    notes: ['XTAL_32K_N — 32.768 kHz crystal'] },
+
+  { gpio: 17, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 6 }, touch: null, rtc: true,
+    uart: ['U1TXD'], spi: [], i2c: true, jtag: null,
+    clockOutput: 'CLK_OUT2', usb: null, strap: false, notes: [] },
+
+  { gpio: 18, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 7 }, touch: null, rtc: true,
+    uart: ['U1RXD'], spi: [], i2c: true, jtag: null,
+    clockOutput: 'CLK_OUT3', usb: null, strap: false, notes: [] },
+
+  { gpio: 19, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 8 }, touch: null, rtc: true,
+    uart: ['U1RTS'], spi: [], i2c: true, jtag: null,
+    clockOutput: 'CLK_OUT', usb: 'USB_D-', strap: false,
+    notes: ['USB D- — shared with USB-OTG / Serial-JTAG'] },
+
+  { gpio: 20, input: true, output: true,  pwm: true,
+    adc: { unit: 'ADC2', channel: 9 }, touch: null, rtc: true,
+    uart: ['U1CTS'], spi: [], i2c: true, jtag: null,
+    clockOutput: 'CLK_OUT1', usb: 'USB_D+', strap: false,
+    notes: ['USB D+ — shared with USB-OTG / Serial-JTAG'] },
+
+  { gpio: 21, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: true,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  // ── GPIOs 35–48 (outside RTC domain) ───────────────────────────
+
+  { gpio: 35, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['SPIIO6', 'FSPID'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false,
+    notes: ['SPI0/1 data line 6 (Octal SPI bus)'] },
+
+  { gpio: 36, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['SPIIO7', 'FSPICLK', 'SUBSPICLK'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false,
+    notes: ['SPI0/1 data line 7 (Octal SPI bus)'] },
+
+  { gpio: 37, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['SPIDQS', 'FSPIQ', 'SUBSPIQ'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false,
+    notes: ['SPI0/1 DQS (Octal SPI bus)'] },
+
+  { gpio: 38, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['FSPIWP', 'SUBSPIWP'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 39, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['SUBSPICS1'], i2c: true, jtag: 'MTCK',
+    clockOutput: 'CLK_OUT3', usb: null, strap: false, notes: [] },
+
+  { gpio: 40, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: [], i2c: true, jtag: 'MTDO',
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 41, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: [], i2c: true, jtag: 'MTDI',
+    clockOutput: 'CLK_OUT1', usb: null, strap: false, notes: [] },
+
+  { gpio: 42, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: [], i2c: true, jtag: 'MTMS',
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 43, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: ['U0TXD'], spi: [], i2c: true, jtag: null,
+    clockOutput: 'CLK_OUT1', usb: null, strap: false,
+    notes: ['Default UART0 TX — serial monitor'] },
+
+  { gpio: 44, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: ['U0RXD'], spi: [], i2c: true, jtag: null,
+    clockOutput: 'CLK_OUT2', usb: null, strap: false,
+    notes: ['Default UART0 RX — serial monitor'] },
+
+  { gpio: 45, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: [], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: true,
+    notes: ['Strapping pin — selects VDD_SPI voltage (VSPI)'] },
+
+  { gpio: 46, input: true, output: false, pwm: false,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: [], i2c: false, jtag: null,
+    clockOutput: null, usb: null, strap: true,
+    notes: ['Input only', 'LOG — ROM boot message output', 'Strapping pin'] },
+
+  { gpio: 47, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['SPICLK_P'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false, notes: [] },
+
+  { gpio: 48, input: true, output: true,  pwm: true,
+    adc: null, touch: null, rtc: false,
+    uart: [], spi: ['SPICLK_N'], i2c: true, jtag: null,
+    clockOutput: null, usb: null, strap: false,
+    notes: ['On-board RGB LED (WS2812) on DevKitC-1'] },
+];
+
+// Fast lookup by GPIO number
+const _gpioCapMap = new Map(GPIO_CAPABILITIES.map(g => [g.gpio, g]));
+function getGPIOCap(num) { return _gpioCapMap.get(num) || null; }
+
 // ----------------------------------------------------------------
-// ESP32-S3-DEVKITC-1 PIN DEFINITIONS  (22 pins per side — accurate)
+// DERIVED REFERENCE TABLES
+// ----------------------------------------------------------------
+const RESTRICTED_PINS = [
+  { gpio: 0,  reason: 'BOOT strapping — held LOW to enter download mode' },
+  { gpio: 3,  reason: 'Strapping — selects JTAG signal source' },
+  { gpio: 19, reason: 'USB D- — shared with USB Serial/JTAG controller' },
+  { gpio: 20, reason: 'USB D+ — shared with USB Serial/JTAG controller' },
+  { gpio: 43, reason: 'Default UART0 TX — used for serial communication' },
+  { gpio: 44, reason: 'Default UART0 RX — used for serial communication' },
+  { gpio: 45, reason: 'Strapping — selects VDD_SPI voltage level' },
+  { gpio: 46, reason: 'Input only — strapping, ROM boot log output' },
+];
+
+const ANALOG_PINS = {
+  ADC1: [
+    { gpio: 1,  channel: 0 }, { gpio: 2,  channel: 1 },
+    { gpio: 3,  channel: 2 }, { gpio: 4,  channel: 3 },
+    { gpio: 5,  channel: 4 }, { gpio: 6,  channel: 5 },
+    { gpio: 7,  channel: 6 }, { gpio: 8,  channel: 7 },
+    { gpio: 9,  channel: 8 }, { gpio: 10, channel: 9 },
+  ],
+  ADC2: [
+    { gpio: 11, channel: 0 }, { gpio: 12, channel: 1 },
+    { gpio: 13, channel: 2 }, { gpio: 14, channel: 3 },
+    { gpio: 15, channel: 4 }, { gpio: 16, channel: 5 },
+    { gpio: 17, channel: 6 }, { gpio: 18, channel: 7 },
+    { gpio: 19, channel: 8 }, { gpio: 20, channel: 9 },
+  ],
+};
+
+const TOUCH_PINS = [
+  { gpio: 1,  channel: 1  }, { gpio: 2,  channel: 2  },
+  { gpio: 3,  channel: 3  }, { gpio: 4,  channel: 4  },
+  { gpio: 5,  channel: 5  }, { gpio: 6,  channel: 6  },
+  { gpio: 7,  channel: 7  }, { gpio: 8,  channel: 8  },
+  { gpio: 9,  channel: 9  }, { gpio: 10, channel: 10 },
+  { gpio: 11, channel: 11 }, { gpio: 12, channel: 12 },
+  { gpio: 13, channel: 13 }, { gpio: 14, channel: 14 },
+];
+
+/* ────────────────────────────────────────────────────────────────
+   VALIDATION SUMMARY  (must match ESP32-S3 datasheet)
+   ────────────────────────────────────────────────────────────────
+   Exposed GPIO on DevKitC-1 :  36   (GPIO 0–21, 35–48)
+   Non-exposed (internal SPI) :  GPIO 26–34  ;  22–25 do not exist
+   ADC1 channels              :  10   (GPIO 1–10,  CH 0–9)
+   ADC2 channels              :  10   (GPIO 11–20, CH 0–9)
+   Total ADC-capable pins     :  20
+   Touch sensor channels      :  14   (GPIO 1–14,  TOUCH 1–14)
+   RTC-capable pins           :  22   (GPIO 0–21)
+   JTAG interface pins        :   4   (MTMS=42, MTDI=41, MTDO=40, MTCK=39)
+   JTAG strapping pin         :   1   (GPIO 3)
+   UART0 pins                 :   4   (TX=43, RX=44, RTS=15, CTS=16)
+   UART1 pins                 :   4   (TX=17, RX=18, RTS=19, CTS=20)
+   USB pins                   :   2   (D-=19, D+=20)
+   Strapping pins             :   4   (GPIO 0, 3, 45, 46)
+   Input-only pins            :   1   (GPIO 46)
+   PWM-capable (LEDC)         :  35   (all output-capable GPIOs)
+   I2C-capable (via matrix)   :  35   (all output-capable GPIOs)
+   Clock output pins          :   8   (17, 18, 19, 20, 39, 41, 43, 44)
+   SPI function pins (FSPI)   :   6   (GPIO 9–14)
+   SPI function pins (Octal)  :   5   (GPIO 35–37, 47–48)
+   ──────────────────────────────────────────────────────────────── */
+
+// ----------------------------------------------------------------
+// ESP32-S3-DEVKITC-1 BOARD PIN LAYOUT  (22 pins per side)
 // Source: Official Espressif ESP32-S3-DevKitC-1 pinout diagram
 // ----------------------------------------------------------------
 const LEFT_PIN_DEFS = [
@@ -47,23 +322,23 @@ const LEFT_PIN_DEFS = [
   { label:'3V3',  type:'power3v3', info:'3.3V Power Rail' },
   { label:'3V3',  type:'power3v3', info:'3.3V Power Rail' },
   { label:'RST',  type:'ctrl',     info:'Reset (active LOW)' },
-  { label:'IO4',  type:'gpio', num:4,  info:'ADC1_CH3 · TOUCH4 · RTC' },
-  { label:'IO5',  type:'gpio', num:5,  info:'ADC1_CH4 · TOUCH5 · RTC' },
-  { label:'IO6',  type:'gpio', num:6,  info:'ADC1_CH5 · TOUCH6 · RTC' },
-  { label:'IO7',  type:'gpio', num:7,  info:'ADC1_CH6 · TOUCH7 · RTC' },
-  { label:'IO15', type:'gpio', num:15, info:'ADC2_CH4 · U0RTS · XTAL_32K · RTC' },
-  { label:'IO16', type:'gpio', num:16, info:'ADC2_CH5 · U0CTS · XTAL_32K · RTC' },
-  { label:'IO17', type:'gpio', num:17, info:'ADC2_CH6 · U1TXD · CLK_OUT2 · RTC' },
-  { label:'IO18', type:'gpio', num:18, info:'ADC2_CH7 · U1RXD · CLK_OUT3 · RTC' },
-  { label:'IO8',  type:'gpio', num:8,  info:'ADC1_CH7 · TOUCH8 · JTAG · RTC' },
-  { label:'IO3',  type:'gpio', num:3,  info:'ADC1_CH2 · TOUCH3 · JTAG · RTC' },
-  { label:'IO46', type:'gpio', num:46, info:'FSPIHD · LOG (default UART log)' },
-  { label:'IO9',  type:'gpio', num:9,  info:'ADC1_CH8 · TOUCH9 · FSPIHD · RTC' },
-  { label:'IO10', type:'gpio', num:10, info:'ADC1_CH9 · TOUCH10 · FSPICS0 · RTC' },
-  { label:'IO11', type:'gpio', num:11, info:'ADC2_CH0 · TOUCH11 · FSPID · RTC' },
-  { label:'IO12', type:'gpio', num:12, info:'ADC2_CH1 · TOUCH12 · FSPICLK · RTC' },
-  { label:'IO13', type:'gpio', num:13, info:'ADC2_CH2 · TOUCH13 · FSPIQ · RTC' },
-  { label:'IO14', type:'gpio', num:14, info:'ADC2_CH3 · TOUCH14 · FSPIWP · RTC' },
+  { label:'IO4',  type:'gpio', num:4,  info:'GPIO4 · ADC1_3 · TOUCH4 · RTC' },
+  { label:'IO5',  type:'gpio', num:5,  info:'GPIO5 · ADC1_4 · TOUCH5 · RTC' },
+  { label:'IO6',  type:'gpio', num:6,  info:'GPIO6 · ADC1_5 · TOUCH6 · RTC' },
+  { label:'IO7',  type:'gpio', num:7,  info:'GPIO7 · ADC1_6 · TOUCH7 · RTC' },
+  { label:'IO15', type:'gpio', num:15, info:'GPIO15 · ADC2_4 · XTAL_32K_P · U0RTS · RTC' },
+  { label:'IO16', type:'gpio', num:16, info:'GPIO16 · ADC2_5 · XTAL_32K_N · U0CTS · RTC' },
+  { label:'IO17', type:'gpio', num:17, info:'GPIO17 · ADC2_6 · U1TXD · CLK_OUT2 · RTC' },
+  { label:'IO18', type:'gpio', num:18, info:'GPIO18 · ADC2_7 · U1RXD · CLK_OUT3 · RTC' },
+  { label:'IO8',  type:'gpio', num:8,  info:'GPIO8 · ADC1_7 · TOUCH8 · SUBSPICS1' },
+  { label:'IO3',  type:'gpio', num:3,  info:'GPIO3 · ADC1_2 · TOUCH3 · JTAG' },
+  { label:'IO46', type:'gpio', num:46, info:'GPIO46 · LOG (input only)' },
+  { label:'IO9',  type:'gpio', num:9,  info:'GPIO9 · ADC1_8 · TOUCH9 · FSPIHD · SUBSPIHD' },
+  { label:'IO10', type:'gpio', num:10, info:'GPIO10 · ADC1_9 · TOUCH10 · FSPICS0 · SUBSPICS0' },
+  { label:'IO11', type:'gpio', num:11, info:'GPIO11 · ADC2_0 · TOUCH11 · FSPID · SUBSPID' },
+  { label:'IO12', type:'gpio', num:12, info:'GPIO12 · ADC2_1 · TOUCH12 · FSPICLK · SUBSPICLK' },
+  { label:'IO13', type:'gpio', num:13, info:'GPIO13 · ADC2_2 · TOUCH13 · FSPIQ · SUBSPIQ' },
+  { label:'IO14', type:'gpio', num:14, info:'GPIO14 · ADC2_3 · TOUCH14 · FSPIWP · SUBSPIWP' },
   { label:'5V',   type:'power5v',  info:'5V USB Power Output' },
   { label:'GND',  type:'gnd',      info:'Ground' },
 ];
@@ -71,25 +346,25 @@ const LEFT_PIN_DEFS = [
 const RIGHT_PIN_DEFS = [
   // top → bottom
   { label:'GND',  type:'gnd',      info:'Ground' },
-  { label:'TX',   type:'gpio', num:43, info:'U0TXD · CLK_OUT1 (default UART0 TX)' },
-  { label:'RX',   type:'gpio', num:44, info:'U0RXD · CLK_OUT2 (default UART0 RX)' },
-  { label:'IO1',  type:'gpio', num:1,  info:'TOUCH1 · ADC1_CH0 · RTC' },
-  { label:'IO2',  type:'gpio', num:2,  info:'TOUCH2 · ADC1_CH1 · RTC' },
-  { label:'IO42', type:'gpio', num:42, info:'MTMS · JTAG' },
-  { label:'IO41', type:'gpio', num:41, info:'MTDI · JTAG · CLK_OUT1' },
-  { label:'IO40', type:'gpio', num:40, info:'MTDO · JTAG · CLK_OUT2' },
-  { label:'IO39', type:'gpio', num:39, info:'MTCK · JTAG · CLK_OUT3 · SUBSPICS1' },
-  { label:'IO38', type:'gpio', num:38, info:'FSPIWP · SUBSPIWP' },
-  { label:'IO37', type:'psram', num:37, info:'⚠ N16R8 PSRAM: SPIDQS · FSPIQ · SUBSPIQ' },
-  { label:'IO36', type:'psram', num:36, info:'⚠ N16R8 PSRAM: SPIIO7 · FSPICLK · SUBSPIDCLK' },
-  { label:'IO35', type:'psram', num:35, info:'⚠ N16R8 PSRAM: SPIIO6 · FSPID · SUBSPID' },
-  { label:'IO0',  type:'gpio', num:0,  info:'BOOT button · Strapping pin' },
-  { label:'IO45', type:'gpio', num:45, info:'Strapping pin (VSPI)' },
-  { label:'IO48', type:'gpio', num:48, info:'RGB_LED · SPICLK_N' },
-  { label:'IO47', type:'gpio', num:47, info:'SPICLK_P' },
-  { label:'IO21', type:'gpio', num:21, info:'RTC' },
-  { label:'IO20', type:'gpio', num:20, info:'USB_D+ · U1CTS · ADC2_CH9 · RTC' },
-  { label:'IO19', type:'gpio', num:19, info:'USB_D- · U1RTS · ADC2_CH8 · RTC' },
+  { label:'TX',   type:'gpio', num:43, info:'GPIO43 · U0TXD · CLK_OUT1' },
+  { label:'RX',   type:'gpio', num:44, info:'GPIO44 · U0RXD · CLK_OUT2' },
+  { label:'IO1',  type:'gpio', num:1,  info:'GPIO1 · ADC1_0 · TOUCH1 · RTC' },
+  { label:'IO2',  type:'gpio', num:2,  info:'GPIO2 · ADC1_1 · TOUCH2 · RTC' },
+  { label:'IO42', type:'gpio', num:42, info:'GPIO42 · MTMS · JTAG' },
+  { label:'IO41', type:'gpio', num:41, info:'GPIO41 · MTDI · JTAG · CLK_OUT1' },
+  { label:'IO40', type:'gpio', num:40, info:'GPIO40 · MTDO · JTAG' },
+  { label:'IO39', type:'gpio', num:39, info:'GPIO39 · MTCK · JTAG · CLK_OUT3 · SUBSPICS1' },
+  { label:'IO38', type:'gpio', num:38, info:'GPIO38 · FSPIWP · SUBSPIWP' },
+  { label:'IO37', type:'gpio', num:37, info:'GPIO37 · SPIDQS · FSPIQ · SUBSPIQ' },
+  { label:'IO36', type:'gpio', num:36, info:'GPIO36 · SPIIO7 · FSPICLK · SUBSPICLK' },
+  { label:'IO35', type:'gpio', num:35, info:'GPIO35 · SPIIO6 · FSPID' },
+  { label:'IO0',  type:'gpio', num:0,  info:'GPIO0 · Strapping pin (BOOT)' },
+  { label:'IO45', type:'gpio', num:45, info:'GPIO45 · Strapping pin · VSPI' },
+  { label:'IO48', type:'gpio', num:48, info:'GPIO48 · SPICLK_N · RGB LED' },
+  { label:'IO47', type:'gpio', num:47, info:'GPIO47 · SPICLK_P' },
+  { label:'IO21', type:'gpio', num:21, info:'GPIO21 · RTC' },
+  { label:'IO20', type:'gpio', num:20, info:'GPIO20 · USB_D+ · U1CTS · ADC2_9 · RTC · CLK_OUT1' },
+  { label:'IO19', type:'gpio', num:19, info:'GPIO19 · USB_D- · U1RTS · ADC2_8 · RTC · CLK_OUT' },
   { label:'GND',  type:'gnd',      info:'Ground' },
   { label:'GND',  type:'gnd',      info:'Ground' },
 ];
@@ -114,6 +389,42 @@ function buildBoardPins() {
     });
   });
   return pins;
+}
+
+// ----------------------------------------------------------------
+// PIN FUNCTION TAG COLORS (matching the reference diagram legend)
+// ----------------------------------------------------------------
+const TAG_COLORS = {
+  gpio:  '#4CAF50', // green
+  adc:   '#e8920d', // orange
+  touch: '#00b8c4', // cyan
+  rtc:   '#4488cc', // blue
+  uart:  '#b060d0', // purple (SERIAL)
+  spi:   '#d05090', // pink (MISC / SPI)
+  jtag:  '#d4a017', // yellow (JTAG/USB)
+  usb:   '#d4a017', // yellow (JTAG/USB)
+  clk:   '#009688', // teal (CLK_OUT)
+  strap: '#e04040', // red (STRAP)
+  other: '#708090', // gray (OTHER)
+};
+
+function getPinFunctionTags(pin) {
+  if (pin.type !== 'gpio' || pin.num === undefined) return [];
+  const cap = getGPIOCap(pin.num);
+  if (!cap) return [];
+  const tags = [];
+
+  if (cap.adc) tags.push({ text: `${cap.adc.unit}_${cap.adc.channel}`, color: TAG_COLORS.adc });
+  if (cap.touch) tags.push({ text: `TOUCH${cap.touch}`, color: TAG_COLORS.touch });
+  cap.uart.forEach(fn => tags.push({ text: fn, color: TAG_COLORS.uart }));
+  if (cap.jtag) tags.push({ text: cap.jtag, color: TAG_COLORS.jtag });
+  if (cap.usb) tags.push({ text: cap.usb, color: TAG_COLORS.usb });
+  cap.spi.slice(0, 2).forEach(fn => tags.push({ text: fn, color: TAG_COLORS.spi }));
+  if (cap.clockOutput) tags.push({ text: cap.clockOutput, color: TAG_COLORS.clk });
+  if (cap.rtc) tags.push({ text: 'RTC', color: TAG_COLORS.rtc });
+  if (cap.strap) tags.push({ text: 'STRAP', color: TAG_COLORS.strap });
+
+  return tags;
 }
 
 // ----------------------------------------------------------------
@@ -146,7 +457,7 @@ function drawBoard(ctx, boardPins, pinStates, hoveredPinId) {
     ctx.beginPath(); ctx.moveTo(x + 4, ly); ctx.lineTo(x + w - 4, ly); ctx.stroke();
   }
 
-  // --- Module area (WROOM-2, N16R8 — slightly taller than WROOM-1) ---
+  // --- Module area (WROOM-1) ---
   roundRect(ctx, x + 10, y + 72, w - 20, 228, 6);
   ctx.fillStyle = '#0e1c12';
   ctx.fill();
@@ -157,9 +468,9 @@ function drawBoard(ctx, boardPins, pinStates, hoveredPinId) {
   ctx.fillStyle = '#2a5c38';
   ctx.font = '5.5px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('ESP32-S3-WROOM-2', x + w / 2 - 10, y + 283);
+  ctx.fillText('ESP32-S3-WROOM-1', x + w / 2 - 10, y + 283);
 
-  // Antenna cutout in module (WROOM-2 has a slightly taller antenna trace area)
+  // Antenna cutout in module
   ctx.fillStyle = '#0f1e14';
   ctx.fillRect(x + w - 30, y + 74, 28, 110);
   ctx.strokeStyle = '#2d5c3a';
@@ -191,33 +502,21 @@ function drawBoard(ctx, boardPins, pinStates, hoveredPinId) {
     ctx.fillRect(cX + 6 + i * (cW - 12) / 8, cY + cH, 3, 3);
   }
 
-  // Chip label — ESP32-S3-N16R8
+  // Chip label
   ctx.fillStyle = '#d0d0d0';
   ctx.font = 'bold 8px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('ESP32-S3', cX + cW / 2, cY + 20);
+  ctx.fillText('ESP32-S3', cX + cW / 2, cY + 22);
   ctx.fillStyle = '#888';
-  ctx.font = 'bold 7px monospace';
-  ctx.fillText('N16R8', cX + cW / 2, cY + 31);
+  ctx.font = 'bold 6.5px monospace';
+  ctx.fillText('WROOM-1', cX + cW / 2, cY + 33);
   ctx.fillStyle = '#555';
   ctx.font = '5.5px monospace';
-  ctx.fillText('ESPRESSIF', cX + cW / 2, cY + 41);
-  ctx.fillText('Xtensa LX7 × 2 · 240 MHz', cX + cW / 2, cY + 51);
-  // Memory specs
+  ctx.fillText('ESPRESSIF', cX + cW / 2, cY + 44);
+  ctx.fillText('Xtensa LX7 × 2 · 240 MHz', cX + cW / 2, cY + 55);
   ctx.fillStyle = '#3a7a5a';
-  ctx.font = '5.5px monospace';
-  ctx.fillText('16MB Flash  ·  8MB OPI PSRAM', cX + cW / 2, cY + 62);
-  // Divider
-  ctx.strokeStyle = '#2a2a2a';
-  ctx.lineWidth = 0.5;
-  ctx.beginPath();
-  ctx.moveTo(cX + 4, cY + 66);
-  ctx.lineTo(cX + cW - 4, cY + 66);
-  ctx.stroke();
-  // Octal PSRAM note
-  ctx.fillStyle = '#5a3a00';
-  ctx.font = '4.5px monospace';
-  ctx.fillText('IO35/36/37 → OPI PSRAM', cX + cW / 2, cY + 75);
+  ctx.font = '5px monospace';
+  ctx.fillText('Wi-Fi · BT 5 · USB-OTG', cX + cW / 2, cY + 66);
 
   // --- USB-C connector ---
   const uX = x + w / 2 - 20, uY = y + h - 32;
@@ -287,35 +586,32 @@ function drawBoard(ctx, boardPins, pinStates, hoveredPinId) {
   ctx.textAlign = 'center';
   ctx.fillText('PWR', x + 20, y + 56);
 
-  // --- 16MB Flash chip ---
+  // --- Flash chip ---
   ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(x + 14, y + h - 88, 32, 22);
+  ctx.fillRect(x + w / 2 - 16, y + h - 88, 32, 22);
   ctx.strokeStyle = '#1a1a1a';
   ctx.lineWidth = 0.5;
-  ctx.strokeRect(x + 14, y + h - 88, 32, 22);
+  ctx.strokeRect(x + w / 2 - 16, y + h - 88, 32, 22);
   ctx.fillStyle = '#3a3a3a';
   ctx.font = '5px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('16MB', x + 30, y + h - 79);
-  ctx.fillText('FLASH', x + 30, y + h - 71);
+  ctx.fillText('FLASH', x + w / 2, y + h - 75);
 
-  // --- 8MB OPI PSRAM chip (separate IC on WROOM-2) ---
-  ctx.fillStyle = '#0d0d0d';
-  ctx.fillRect(x + w - 46, y + h - 88, 32, 22);
-  ctx.strokeStyle = '#3a2000';
-  ctx.lineWidth = 0.8;
-  ctx.strokeRect(x + w - 46, y + h - 88, 32, 22);
-  ctx.fillStyle = '#5a3a00';
-  ctx.font = '5px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('8MB', x + w - 30, y + h - 79);
-  ctx.fillText('PSRAM', x + w - 30, y + h - 71);
+  // --- Crystal ---
+  ctx.fillStyle = '#1a1a1a';
+  ctx.strokeStyle = '#333';
+  ctx.lineWidth = 0.5;
+  ctx.fillRect(x + 14, y + h - 84, 18, 12);
+  ctx.strokeRect(x + 14, y + h - 84, 18, 12);
+  ctx.fillStyle = '#333';
+  ctx.font = '4.5px monospace';
+  ctx.fillText('XTAL', x + 23, y + h - 76);
 
   // --- Board label ---
   ctx.fillStyle = '#3a6a4a';
   ctx.font = '6px monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('ESP32-S3-DevKitC-1  N16R8', x + w / 2, y + h - 45);
+  ctx.fillText('ESP32-S3-DevKitC-1', x + w / 2, y + h - 45);
 
   // --- Copper trace lines from pin pads to board edge ---
   ctx.strokeStyle = 'rgba(184,134,11,0.25)';
@@ -338,34 +634,41 @@ function drawBoard(ctx, boardPins, pinStates, hoveredPinId) {
     ctx.strokeRect(padX, pin.cy - 3.5, 8, 7);
   });
 
+  // --- Pin numbers on PCB (silkscreen style between pads and board center) ---
+  ctx.font = 'bold 8px monospace';
+  boardPins.forEach(pin => {
+    let numText;
+    if (pin.type === 'gpio' && pin.num !== undefined) {
+      numText = String(pin.num);
+    } else if (pin.type === 'power3v3') {
+      numText = '3V3';
+    } else if (pin.type === 'power5v') {
+      numText = '5V';
+    } else if (pin.type === 'gnd') {
+      numText = 'GND';
+    } else if (pin.type === 'ctrl') {
+      numText = 'RST';
+    } else {
+      return;
+    }
+    ctx.fillStyle = '#b0d8c0';
+    if (pin.side === 'left') {
+      ctx.textAlign = 'left';
+      ctx.fillText(numText, x + 6, pin.cy + 3);
+    } else {
+      ctx.textAlign = 'right';
+      ctx.fillText(numText, x + w - 6, pin.cy + 3);
+    }
+  });
+
   // --- Pin connection dots ---
   boardPins.forEach(pin => {
-    const isPSRAM  = pin.type === 'psram';
     const isHovered = pin.id === hoveredPinId;
     const pinState = pin.type === 'gpio' ? (pinStates[pin.num] || null) : null;
     const isHigh   = pinState && pinState.value === 1;
     const hasAnalog = pinState && pinState.pwm > 0;
 
-    if (isPSRAM) {
-      // PSRAM-reserved pin — draw as crossed-out orange dot
-      ctx.fillStyle = '#3a1800';
-      ctx.strokeStyle = '#ff6b00';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(pin.cx, pin.cy, PIN_R, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      // X mark
-      ctx.strokeStyle = '#ff6b00';
-      ctx.lineWidth = 1.2;
-      ctx.lineCap = 'round';
-      const r = PIN_R - 1;
-      ctx.beginPath();
-      ctx.moveTo(pin.cx - r, pin.cy - r); ctx.lineTo(pin.cx + r, pin.cy + r);
-      ctx.moveTo(pin.cx + r, pin.cy - r); ctx.lineTo(pin.cx - r, pin.cy + r);
-      ctx.stroke();
-    } else if (isHigh || hasAnalog) {
-      // GPIO HIGH — glow teal
+    if (isHigh || hasAnalog) {
       ctx.save();
       ctx.shadowBlur = 12;
       ctx.shadowColor = '#00d4aa';
@@ -390,23 +693,44 @@ function drawBoard(ctx, boardPins, pinStates, hoveredPinId) {
     const stripX = pin.side === 'left' ? pin.cx - 18 : pin.cx + 10;
     ctx.fillRect(stripX, pin.cy - 3, 6, 6);
 
-    // Pin label — dim + strikethrough for PSRAM pins
-    ctx.fillStyle = isPSRAM ? '#6b3a00' : (isHovered ? '#e2e8f0' : '#94a3b8');
-    ctx.font = `${isHovered ? 'bold ' : ''}9px monospace`;
+    // GPIO number label (green, closest to board)
+    const isGpio = pin.type === 'gpio' && pin.num !== undefined;
+    ctx.fillStyle = isHovered ? '#e2e8f0' : (isGpio ? TAG_COLORS.gpio : '#94a3b8');
+    ctx.font = `${isHovered ? 'bold ' : ''}8px monospace`;
     ctx.textAlign = pin.side === 'left' ? 'right' : 'left';
     const labelX = pin.side === 'left' ? pin.cx - 24 : pin.cx + 24;
-    ctx.fillText(pin.label, labelX, pin.cy + 3.5);
+    const gpioLabel = isGpio ? `GPIO${pin.num}` : pin.label;
+    ctx.fillText(gpioLabel, labelX, pin.cy + 3.5);
 
-    // Strikethrough for PSRAM pins
-    if (isPSRAM) {
-      const tw = ctx.measureText(pin.label).width;
-      const lx = pin.side === 'left' ? labelX - tw : labelX;
-      ctx.strokeStyle = '#6b3a00';
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(lx, pin.cy + 1);
-      ctx.lineTo(lx + tw, pin.cy + 1);
-      ctx.stroke();
+    // Colored function tags extending outward from the GPIO label
+    const tags = getPinFunctionTags(pin);
+    if (tags.length > 0) {
+      const tagFont = '6.5px monospace';
+      const tagGap = 3;
+
+      ctx.font = '8px monospace';
+      const gpioW = ctx.measureText(gpioLabel).width;
+      ctx.font = tagFont;
+
+      if (pin.side === 'left') {
+        let tx = labelX - gpioW - tagGap;
+        ctx.textAlign = 'right';
+        for (const tag of tags) {
+          const tw = ctx.measureText(tag.text).width;
+          if (tx - tw < 4) break;
+          ctx.fillStyle = tag.color;
+          ctx.fillText(tag.text, tx, pin.cy + 3);
+          tx -= tw + tagGap;
+        }
+      } else {
+        let tx = labelX + gpioW + tagGap;
+        ctx.textAlign = 'left';
+        for (const tag of tags) {
+          ctx.fillStyle = tag.color;
+          ctx.fillText(tag.text, tx, pin.cy + 3);
+          tx += ctx.measureText(tag.text).width + tagGap;
+        }
+      }
     }
   });
 
@@ -1293,9 +1617,6 @@ class ArduinoInterpreter {
 
       pinMode: (pin, mode) => {
         if (state.stop) { env.__stop = true; throw new Error('__STOPPED__'); }
-        if (pin === 35 || pin === 36 || pin === 37) {
-          serial.appendLine(`[WARN] GPIO${pin} is reserved for Octal PSRAM on N16R8 — do not use!`, 'warn');
-        }
         if (!board[pin]) board[pin] = { mode: 'INPUT', value: 0, pwm: 0 };
         board[pin].mode = mode === 1 ? 'OUTPUT' : mode === 2 ? 'INPUT_PULLUP' : 'INPUT';
         _dirty = true;
@@ -1303,10 +1624,6 @@ class ArduinoInterpreter {
 
       digitalWrite: (pin, val) => {
         if (state.stop) { env.__stop = true; throw new Error('__STOPPED__'); }
-        if (pin === 35 || pin === 36 || pin === 37) {
-          serial.appendLine(`[WARN] GPIO${pin} is reserved for Octal PSRAM on N16R8!`, 'warn');
-          return;
-        }
         if (!board[pin]) board[pin] = { mode: 'OUTPUT', value: 0, pwm: 0 };
         board[pin].value = val ? 1 : 0;
         board[pin].pwm   = 0;
@@ -1418,6 +1735,12 @@ class SimulatorApp {
     this.components = [];
     this.wires      = [];
 
+    // Zoom
+    this.zoom = 1;
+    this.zoomMin = 0.25;
+    this.zoomMax = 4;
+    this.zoomSteps = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4];
+
     // Interaction
     this.selectedTool   = null;  // e.g. 'led-red'
     this.wireFrom       = null;  // { id, cx, cy } — pin being wired
@@ -1445,9 +1768,11 @@ class SimulatorApp {
   }
 
   _init() {
-    // Set canvas size
+    // Canvas size is set by _applyZoom() below
     this.canvas.width  = CANVAS_W;
     this.canvas.height = CANVAS_H;
+    this.canvas.style.width  = CANVAS_W + 'px';
+    this.canvas.style.height = CANVAS_H + 'px';
 
     // Scroll canvas to show board nicely
     this.wrap.scrollLeft = 0;
@@ -1487,6 +1812,20 @@ class SimulatorApp {
       }
     });
 
+    // Zoom controls
+    document.getElementById('btn-zoom-in').addEventListener('click', () => this._zoomStep(1));
+    document.getElementById('btn-zoom-out').addEventListener('click', () => this._zoomStep(-1));
+    document.getElementById('btn-zoom-fit').addEventListener('click', () => this._zoomFit());
+
+    // Keyboard zoom (Ctrl+Plus / Ctrl+Minus / Ctrl+0)
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === '=' || e.key === '+') { e.preventDefault(); this._zoomStep(1); }
+        if (e.key === '-')                  { e.preventDefault(); this._zoomStep(-1); }
+        if (e.key === '0')                  { e.preventDefault(); this._zoomFit(); }
+      }
+    });
+
     // Palette items
     document.querySelectorAll('.palette-item').forEach(item => {
       item.addEventListener('click', () => {
@@ -1500,6 +1839,7 @@ class SimulatorApp {
     });
 
     // Start render loop
+    this._applyZoom();
     this._renderLoop();
   }
 
@@ -1519,12 +1859,42 @@ class SimulatorApp {
     this.canvas.classList.remove('tool-active');
   }
 
+  // ---- ZOOM ----
+  _applyZoom() {
+    const z = this.zoom;
+    this.canvas.width  = Math.round(CANVAS_W * z);
+    this.canvas.height = Math.round(CANVAS_H * z);
+    this.canvas.style.width  = this.canvas.width + 'px';
+    this.canvas.style.height = this.canvas.height + 'px';
+    document.getElementById('zoom-level').textContent = Math.round(z * 100) + '%';
+    _dirty = true;
+  }
+
+  _zoomStep(dir) {
+    const idx = this.zoomSteps.findIndex(s => s >= this.zoom - 0.001);
+    const next = Math.max(0, Math.min(this.zoomSteps.length - 1, (idx === -1 ? 3 : idx) + dir));
+    this.zoom = this.zoomSteps[next];
+    this._applyZoom();
+  }
+
+  _zoomTo(level) {
+    this.zoom = Math.max(this.zoomMin, Math.min(this.zoomMax, level));
+    this._applyZoom();
+  }
+
+  _zoomFit() {
+    const wrapRect = this.wrap.getBoundingClientRect();
+    const fitW = wrapRect.width / CANVAS_W;
+    const fitH = wrapRect.height / CANVAS_H;
+    this._zoomTo(Math.min(fitW, fitH) * 0.95);
+  }
+
   // ---- CANVAS POSITION ----
   _canvasPos(e) {
     const rect = this.canvas.getBoundingClientRect();
     return {
-      x: Math.round(e.clientX - rect.left),
-      y: Math.round(e.clientY - rect.top),
+      x: Math.round((e.clientX - rect.left) / this.zoom),
+      y: Math.round((e.clientY - rect.top) / this.zoom),
     };
   }
 
@@ -1532,9 +1902,7 @@ class SimulatorApp {
 
   // ---- FIND PINS ----
   _findPinAt(mx, my) {
-    // Board pins (skip PSRAM-reserved pins — they cannot be wired)
     for (const bp of this.boardPins) {
-      if (bp.type === 'psram') continue;
       if (Math.hypot(bp.cx - mx, bp.cy - my) < PIN_HIT_R) {
         return { id: `board_${bp.id}`, cx: bp.cx, cy: bp.cy, boardPin: bp };
       }
@@ -1616,34 +1984,19 @@ class SimulatorApp {
       _dirty = true;
     }
 
-    // Hover detection — include PSRAM pins for tooltip but not wiring
+    // Hover detection
     let hoveredBoardPin = null;
     for (const bp of this.boardPins) {
       if (Math.hypot(bp.cx - x, bp.cy - y) < PIN_HIT_R) { hoveredBoardPin = bp; break; }
     }
-    const pin = hoveredBoardPin && hoveredBoardPin.type !== 'psram'
+    const pin = hoveredBoardPin
       ? { id: `board_${hoveredBoardPin.id}`, cx: hoveredBoardPin.cx, cy: hoveredBoardPin.cy, boardPin: hoveredBoardPin }
-      : (hoveredBoardPin ? null : this._findPinAt(x, y)); // fallback to comp pins
-    const newHover = hoveredBoardPin ? `board_${hoveredBoardPin.id}` : (pin ? pin.id : null);
+      : this._findPinAt(x, y);
+    const newHover = pin ? pin.id : null;
     if (newHover !== this.hoveredPinId) {
       this.hoveredPinId = newHover;
       _dirty = true;
-      if (hoveredBoardPin) {
-        // Show tooltip for all board pins including PSRAM
-        this._showTooltip(
-          hoveredBoardPin.type !== 'psram'
-            ? { id: `board_${hoveredBoardPin.id}`, cx: hoveredBoardPin.cx, cy: hoveredBoardPin.cy, boardPin: hoveredBoardPin }
-            : null,
-          e.clientX, e.clientY
-        );
-        // For PSRAM pins, manually set the label in tooltip
-        if (hoveredBoardPin.type === 'psram') {
-          this.tooltip.textContent = `${hoveredBoardPin.label}  GPIO${hoveredBoardPin.num}  ⚠ Reserved — Octal PSRAM (N16R8)`;
-          this.tooltip.classList.add('visible');
-          this.tooltip.style.left = e.clientX + 'px';
-          this.tooltip.style.top  = e.clientY + 'px';
-        }
-      } else if (pin) {
+      if (pin) {
         this._showTooltip(pin, e.clientX, e.clientY);
       } else {
         this.tooltip.classList.remove('visible');
@@ -1697,6 +2050,14 @@ class SimulatorApp {
   }
 
   _onWheel(e) {
+    // Ctrl+scroll → zoom
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -1 : 1;
+      this._zoomStep(delta);
+      return;
+    }
+
     const { x, y } = this._canvasPos(e);
     // Scroll potentiometer
     const comp = this._findCompAt(x, y);
@@ -1854,21 +2215,13 @@ class SimulatorApp {
       const bp = pin.boardPin;
       label = bp.label;
       if (bp.type === 'gpio')     label += `  GPIO${bp.num}`;
-      if (bp.type === 'psram')    label += `  GPIO${bp.num}  ⚠ Reserved — Octal PSRAM (N16R8)`;
       if (bp.type === 'power3v3') label += '  3.3V';
       if (bp.type === 'power5v')  label += '  5V';
       if (bp.type === 'gnd')      label += '  GND';
+      if (bp.info) label += `  —  ${bp.info}`;
     } else if (pin && pin.comp) {
       const absPin = pin.comp.absPins().find(p => p.id === pin.id);
       label = `${pin.comp.type} · ${absPin ? absPin.label || absPin.name : ''}`;
-    } else {
-      // PSRAM-only hover (no pin object passed)
-      for (const bp of this.boardPins) {
-        if (bp.type === 'psram' && bp.id === this.hoveredPinId?.replace('board_','')) {
-          label = `${bp.label}  GPIO${bp.num}  ⚠ Reserved — Octal PSRAM (N16R8)`;
-          break;
-        }
-      }
     }
     this.tooltip.textContent = label;
     this.tooltip.style.left = clientX + 'px';
@@ -1891,6 +2244,9 @@ class SimulatorApp {
   _render() {
     const ctx = this.ctx;
     const W = CANVAS_W, H = CANVAS_H;
+
+    // Apply zoom transform — all drawing uses logical coordinates
+    ctx.setTransform(this.zoom, 0, 0, this.zoom, 0, 0);
 
     // Background
     ctx.fillStyle = '#0a0f1e';

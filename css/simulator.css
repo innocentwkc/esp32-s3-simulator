@@ -332,6 +332,22 @@ html, body {
 #simCanvas.tool-active { cursor: crosshair; }
 #simCanvas.wiring { cursor: cell; }
 
+/* ---- Zoom controls ---- */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.zoom-controls .tb-btn { min-width: 28px; padding: 0 6px; font-size: 16px; font-weight: bold; }
+.zoom-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  min-width: 38px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  user-select: none;
+}
+
 /* ---- Right panel (code + serial) ---- */
 .right-panel {
   width: var(--code-w);
