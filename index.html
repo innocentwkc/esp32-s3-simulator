@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32-S3 Simulator — Build & Program in Your Browser</title>
+  <meta name="description" content="Design ESP32-S3 circuits, write Arduino code, and simulate in real time. No hardware required.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">S3</div>
+        <span class="nav-logo-text">ESP<span>32-S3</span> Sim</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#components">Components</a>
+        <a href="simulator.html" class="btn-primary">Open Simulator →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">ESP32-S3-N16R8 · 16MB Flash · 8MB OPI PSRAM · 240 MHz</div>
+        <h1 class="hero-title">
+          Build ESP32-S3 projects<br>
+          <span class="gradient-text">in your browser</span>
+        </h1>
+        <p class="hero-sub">
+          Design circuits, write Arduino firmware, and see your components
+          react in real time — no hardware, no setup, no limits.
+        </p>
+        <div class="hero-actions">
+          <a href="simulator.html" class="btn-primary btn-large">Open Simulator →</a>
+          <a href="#features" class="btn-secondary btn-large">Learn more</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="board-svg-wrap">
+          <!-- ESP32-S3-DevKitC-1 SVG illustration -->
+          <svg class="board-svg" viewBox="0 0 220 540" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="glow-green">
+                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glow-led">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <linearGradient id="pcb-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1e6035"/>
+                <stop offset="100%" stop-color="#145028"/>
+              </linearGradient>
+            </defs>
+
+            <!-- PCB body -->
+            <rect x="10" y="10" width="200" height="520" rx="10" fill="url(#pcb-grad)" stroke="#2a7a3e" stroke-width="1.5"/>
+
+            <!-- PCB texture lines -->
+            <line x1="10" y1="80" x2="210" y2="80" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <line x1="10" y1="430" x2="210" y2="430" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+            <!-- Module (WROOM-like) -->
+            <rect x="20" y="95" width="180" height="220" rx="6" fill="#142a1a" stroke="#2e5c3e" stroke-width="1"/>
+
+            <!-- Antenna cutout area -->
+            <rect x="172" y="97" width="26" height="110" fill="#1a3a1a"/>
+            <line x1="172" y1="97" x2="172" y2="207" stroke="#3a6a4a" stroke-width="0.8" stroke-dasharray="3,3"/>
+            <text x="185" y="158" fill="#3a6a4a" font-size="6" font-family="monospace" text-anchor="middle" transform="rotate(-90 185 158)">ANTENNA</text>
+
+            <!-- Main ESP32-S3 chip -->
+            <rect x="45" y="130" width="115" height="90" fill="#0d0d0d" stroke="#222" stroke-width="0.5" rx="2"/>
+            <!-- Chip pin marks top -->
+            <rect x="52" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="64" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="76" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="88" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="100" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="112" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="124" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <rect x="136" y="127" width="4" height="3" fill="#333" rx="0.5"/>
+            <!-- Chip labels -->
+            <text x="103" y="160" fill="#ddd" font-size="9" font-family="monospace" text-anchor="middle" font-weight="bold">ESP32-S3</text>
+            <text x="103" y="170" fill="#aaa" font-size="7" font-family="monospace" text-anchor="middle" font-weight="bold">N16R8</text>
+            <text x="103" y="180" fill="#555" font-size="5.5" font-family="monospace" text-anchor="middle">ESPRESSIF  ·  Xtensa LX7 × 2</text>
+            <text x="103" y="190" fill="#3a7a5a" font-size="5.5" font-family="monospace" text-anchor="middle">16MB Flash · 8MB OPI PSRAM</text>
+            <text x="103" y="200" fill="#3a3000" font-size="5" font-family="monospace" text-anchor="middle">IO35/36/37 → OPI PSRAM</text>
+
+            <!-- Flash chip -->
+            <rect x="25" y="340" width="32" height="22" fill="#0d0d0d" stroke="#1a1a1a" rx="1"/>
+            <text x="41" y="353" fill="#333" font-size="5.5" font-family="monospace" text-anchor="middle">FLASH</text>
+
+            <!-- Crystal -->
+            <rect x="65" y="340" width="18" height="12" fill="#1a1a1a" stroke="#333" rx="1"/>
+            <text x="74" y="349" fill="#333" font-size="5" font-family="monospace" text-anchor="middle">XTAL</text>
+
+            <!-- EN/Reset button -->
+            <rect x="15" y="35" width="16" height="16" fill="#111" rx="2" stroke="#222"/>
+            <circle cx="23" cy="43" r="5" fill="#8b0000"/>
+            <circle cx="23" cy="43" r="3" fill="#cc0000"/>
+            <text x="23" y="60" fill="#666" font-size="5.5" font-family="monospace" text-anchor="middle">EN</text>
+
+            <!-- BOOT button -->
+            <rect x="189" y="35" width="16" height="16" fill="#111" rx="2" stroke="#222"/>
+            <circle cx="197" cy="43" r="5" fill="#000066"/>
+            <circle cx="197" cy="43" r="3" fill="#0000cc"/>
+            <text x="197" y="60" fill="#666" font-size="5.5" font-family="monospace" text-anchor="middle">IO0</text>
+
+            <!-- Power LED (green, glowing) -->
+            <circle cx="35" cy="80" r="5" fill="#005500" filter="url(#glow-green)"/>
+            <circle cx="35" cy="80" r="3.5" fill="#00dd00" filter="url(#glow-led)"/>
+            <text x="35" y="73" fill="#006600" font-size="5" font-family="monospace" text-anchor="middle">PWR</text>
+
+            <!-- RGB LED (IO38) -->
+            <circle cx="55" cy="80" r="3.5" fill="#ccccff" opacity="0.6"/>
+            <text x="55" y="73" fill="#555" font-size="5" font-family="monospace" text-anchor="middle">RGB</text>
+
+            <!-- USB-C connector -->
+            <rect x="78" y="498" width="64" height="26" rx="6" fill="#777" stroke="#999" stroke-width="0.5"/>
+            <rect x="82" y="502" width="56" height="18" rx="4" fill="#444"/>
+            <ellipse cx="84" cy="511" rx="3" ry="2.5" fill="#666"/>
+            <ellipse cx="136" cy="511" rx="3" ry="2.5" fill="#666"/>
+            <text x="110" y="514" fill="#888" font-size="6" font-family="monospace" text-anchor="middle">USB-C</text>
+
+            <!-- Left header pins (gold pads) -->
+            <g fill="#b8860b" stroke="#c8a000" stroke-width="0.5">
+              <rect x="7" y="370" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="384" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="398" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="412" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="426" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="440" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="454" width="7" height="7" rx="0.5"/>
+              <rect x="7" y="468" width="7" height="7" rx="0.5"/>
+            </g>
+
+            <!-- Right header pins (gold pads) -->
+            <g fill="#b8860b" stroke="#c8a000" stroke-width="0.5">
+              <rect x="206" y="370" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="384" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="398" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="412" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="426" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="440" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="454" width="7" height="7" rx="0.5"/>
+              <rect x="206" y="468" width="7" height="7" rx="0.5"/>
+            </g>
+
+            <!-- Copper traces decorative -->
+            <line x1="14" y1="374" x2="25" y2="374" stroke="#b8860b" stroke-width="1" opacity="0.4"/>
+            <line x1="14" y1="388" x2="25" y2="388" stroke="#b8860b" stroke-width="1" opacity="0.4"/>
+            <line x1="195" y1="374" x2="206" y2="374" stroke="#b8860b" stroke-width="1" opacity="0.4"/>
+            <line x1="195" y1="388" x2="206" y2="388" stroke="#b8860b" stroke-width="1" opacity="0.4"/>
+
+            <!-- Board label -->
+            <text x="110" y="486" fill="#5a7a6a" font-size="6" font-family="monospace" text-anchor="middle">ESP32-S3-DevKitC-1  N16R8</text>
+            <text x="110" y="496" fill="#3a5a4a" font-size="5.5" font-family="monospace" text-anchor="middle">WROOM-2</text>
+          </svg>
+
+          <!-- Floating component chips -->
+          <div class="chip chip-1">
+            <span class="dot" style="background:#ff4444"></span> Red LED
+          </div>
+          <div class="chip chip-2">
+            <span class="dot" style="background:#888"></span> 220Ω
+          </div>
+          <div class="chip chip-3">
+            <span class="dot" style="background:#4d96ff"></span> Button
+          </div>
+          <div class="chip chip-4">
+            <span class="dot" style="background:#ffd700"></span> Buzzer
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats bar -->
+  <div class="stats">
+    <div class="stats-inner">
+      <div class="stat">
+        <span class="stat-num">42</span>
+        <div class="stat-label">Available GPIO pins (N16R8)</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">16<small style="font-size:16px">MB</small></span>
+        <div class="stat-label">Flash + 8MB OPI PSRAM</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">240<small style="font-size:16px">MHz</small></span>
+        <div class="stat-label">Dual-core Xtensa LX7</div>
+      </div>
+      <div class="stat">
+        <span class="stat-num">Wi-Fi</span>
+        <div class="stat-label">2.4 GHz + Bluetooth 5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Why use the simulator</div>
+        <h2 class="section-title">Everything you need to<br><span class="gradient-text">prototype faster</span></h2>
+        <p class="section-sub">
+          From circuit design to running code — all in one place, in your browser.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">🔌</div>
+          <h3 class="feature-title">Visual Circuit Builder</h3>
+          <p class="feature-desc">
+            Drag components onto the canvas, click pins to draw wires,
+            and build complete circuits visually. The ESP32-S3 board is fully
+            rendered with all 40+ pins labeled and interactive.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">⌨️</div>
+          <h3 class="feature-title">Arduino-Compatible Code</h3>
+          <p class="feature-desc">
+            Write real Arduino code — <code style="color:var(--accent);font-family:monospace">pinMode</code>,
+            <code style="color:var(--accent);font-family:monospace">digitalWrite</code>,
+            <code style="color:var(--accent);font-family:monospace">delay</code>,
+            and Serial output all work exactly as on hardware.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Live Simulation</h3>
+          <p class="feature-desc">
+            Hit Run and watch LEDs glow, buttons trigger events, and Serial
+            output stream in real time. Control simulation speed from 0.25× to 10×.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">📟</div>
+          <h3 class="feature-title">Serial Monitor</h3>
+          <p class="feature-desc">
+            <code style="color:var(--accent);font-family:monospace">Serial.println()</code>
+            output appears instantly in the built-in monitor — just like the Arduino IDE,
+            without a USB cable.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">🎛️</div>
+          <h3 class="feature-title">Interactive Components</h3>
+          <p class="feature-desc">
+            Press buttons while the simulation runs, spin the potentiometer
+            with your scroll wheel — components respond in real time.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">🌐</div>
+          <h3 class="feature-title">Zero Setup</h3>
+          <p class="feature-desc">
+            No install, no drivers, no IDE. Open your browser and start building.
+            Works offline after first load. Share circuits by saving the URL.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Component showcase -->
+  <section class="section components-section" id="components">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Component library</div>
+        <h2 class="section-title">Real components,<br><span class="gradient-text">simulated perfectly</span></h2>
+      </div>
+
+      <div class="comp-strip reveal">
+        <div class="comp-card">
+          <span class="comp-icon">🔴</span>
+          <span class="comp-name">LED</span>
+          <span class="comp-desc">Red · Green · Blue · Yellow</span>
+        </div>
+        <div class="comp-card">
+          <span class="comp-icon">〰️</span>
+          <span class="comp-name">Resistor</span>
+          <span class="comp-desc">220Ω · 1kΩ · 10kΩ</span>
+        </div>
+        <div class="comp-card">
+          <span class="comp-icon">🔘</span>
+          <span class="comp-name">Pushbutton</span>
+          <span class="comp-desc">Tactile switch · clickable</span>
+        </div>
+        <div class="comp-card">
+          <span class="comp-icon">🔊</span>
+          <span class="comp-name">Buzzer</span>
+          <span class="comp-desc">Active · plays tone</span>
+        </div>
+        <div class="comp-card">
+          <span class="comp-icon">🎚️</span>
+          <span class="comp-name">Potentiometer</span>
+          <span class="comp-desc">10kΩ · scroll to adjust</span>
+        </div>
+        <div class="comp-card" style="opacity:0.5; border-style:dashed;">
+          <span class="comp-icon">📺</span>
+          <span class="comp-name">OLED Display</span>
+          <span class="comp-desc">Coming soon</span>
+        </div>
+        <div class="comp-card" style="opacity:0.5; border-style:dashed;">
+          <span class="comp-icon">🌡️</span>
+          <span class="comp-name">DHT22 Sensor</span>
+          <span class="comp-desc">Coming soon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">Workflow</div>
+        <h2 class="section-title">From idea to simulation<br><span class="gradient-text">in minutes</span></h2>
+      </div>
+
+      <div class="features-grid reveal" style="margin-top: 48px;">
+        <div class="feature-card" style="text-align:center;">
+          <div class="feature-icon" style="margin: 0 auto 18px; background: rgba(77,150,255,0.12); border-color: rgba(77,150,255,0.25);">
+            <span style="font-size:20px; color: var(--accent-2);">1</span>
+          </div>
+          <h3 class="feature-title">Place Components</h3>
+          <p class="feature-desc">Click a component in the palette, then click the canvas to place it. Drag to reposition. Right-click to delete.</p>
+        </div>
+        <div class="feature-card" style="text-align:center;">
+          <div class="feature-icon" style="margin: 0 auto 18px; background: rgba(77,150,255,0.12); border-color: rgba(77,150,255,0.25);">
+            <span style="font-size:20px; color: var(--accent-2);">2</span>
+          </div>
+          <h3 class="feature-title">Connect Wires</h3>
+          <p class="feature-desc">Click a pin on the ESP32-S3 board or a component pin to start a wire. Click a second pin to complete the connection.</p>
+        </div>
+        <div class="feature-card" style="text-align:center;">
+          <div class="feature-icon" style="margin: 0 auto 18px; background: rgba(77,150,255,0.12); border-color: rgba(77,150,255,0.25);">
+            <span style="font-size:20px; color: var(--accent-2);">3</span>
+          </div>
+          <h3 class="feature-title">Write &amp; Run Code</h3>
+          <p class="feature-desc">Write Arduino code in the editor on the right. Hit Run — your code executes and components respond immediately.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-inner">
+      <h2 class="cta-title">Ready to build?</h2>
+      <p class="cta-sub">Open the simulator and start your first ESP32-S3 project right now.</p>
+      <a href="simulator.html" class="btn-primary btn-large">Launch Simulator →</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">ESP<span>32-S3</span> Sim</div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#components">Components</a>
+        <a href="simulator.html">Simulator</a>
+        <a href="https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/" target="_blank" rel="noopener">ESP32-S3 Docs ↗</a>
+      </div>
+      <div class="footer-copy">Built for makers &amp; learners</div>
+    </div>
+  </footer>
+
+  <script>
+    // Reveal animation on scroll
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP32-S3 Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/simulator.css">
+</head>
+<body>
+
+<div class="sim-wrapper">
+
+  <!-- Toolbar -->
+  <header class="toolbar">
+    <a href="index.html" class="toolbar-logo" title="Back to home">
+      <div class="toolbar-logo-icon">S3</div>
+      <span class="toolbar-logo-text">ESP<span>32-S3</span> Sim</span>
+    </a>
+
+    <div class="toolbar-divider"></div>
+
+    <button id="btn-run" class="tb-btn tb-btn-run" title="Run simulation (Ctrl+Enter)">
+      ▶ Run
+    </button>
+    <button id="btn-stop" class="tb-btn tb-btn-stop" disabled title="Stop simulation">
+      ■ Stop
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <label style="font-size:12px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
+      Speed
+      <select id="sim-speed" class="tb-select" title="Simulation speed">
+        <option value="0.25">0.25×</option>
+        <option value="0.5">0.5×</option>
+        <option value="1" selected>1× (real-time)</option>
+        <option value="2">2×</option>
+        <option value="5">5×</option>
+        <option value="10">10×</option>
+      </select>
+    </label>
+
+    <div class="toolbar-divider"></div>
+
+    <button id="btn-clear-canvas" class="tb-btn tb-btn-ghost" title="Clear all components and wires">
+      Clear Canvas
+    </button>
+    <button id="btn-clear-serial" class="tb-btn tb-btn-ghost" title="Clear serial monitor output">
+      Clear Serial
+    </button>
+
+    <div class="tb-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Ready</span>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <div class="sim-body">
+
+    <!-- Left: Component palette -->
+    <aside class="palette">
+      <div class="palette-header">Components</div>
+
+      <div class="palette-scroll">
+
+        <div class="palette-group">
+          <div class="palette-group-label">LEDs</div>
+
+          <div class="palette-item" data-component="led-red" title="Red LED — connect anode to GPIO, cathode to GND via resistor">
+            <div class="palette-item-icon">🔴</div>
+            <div>
+              <div class="palette-item-label">Red LED</div>
+              <div class="palette-item-sub">Vf ≈ 2.0V</div>
+            </div>
+          </div>
+
+          <div class="palette-item" data-component="led-green" title="Green LED">
+            <div class="palette-item-icon">🟢</div>
+            <div>
+              <div class="palette-item-label">Green LED</div>
+              <div class="palette-item-sub">Vf ≈ 2.2V</div>
+            </div>
+          </div>
+
+          <div class="palette-item" data-component="led-blue" title="Blue LED">
+            <div class="palette-item-icon">🔵</div>
+            <div>
+              <div class="palette-item-label">Blue LED</div>
+              <div class="palette-item-sub">Vf ≈ 3.2V</div>
+            </div>
+          </div>
+
+          <div class="palette-item" data-component="led-yellow" title="Yellow LED">
+            <div class="palette-item-icon">🟡</div>
+            <div>
+              <div class="palette-item-label">Yellow LED</div>
+              <div class="palette-item-sub">Vf ≈ 2.1V</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-group">
+          <div class="palette-group-label">Passive</div>
+
+          <div class="palette-item" data-component="resistor-220" title="220Ω resistor — standard LED current limiter">
+            <div class="palette-item-icon">〰️</div>
+            <div>
+              <div class="palette-item-label">Resistor 220Ω</div>
+              <div class="palette-item-sub">¼W, 5%</div>
+            </div>
+          </div>
+
+          <div class="palette-item" data-component="resistor-1k" title="1kΩ resistor">
+            <div class="palette-item-icon">〰️</div>
+            <div>
+              <div class="palette-item-label">Resistor 1kΩ</div>
+              <div class="palette-item-sub">¼W, 5%</div>
+            </div>
+          </div>
+
+          <div class="palette-item" data-component="resistor-10k" title="10kΩ resistor — pull-up/pull-down">
+            <div class="palette-item-icon">〰️</div>
+            <div>
+              <div class="palette-item-label">Resistor 10kΩ</div>
+              <div class="palette-item-sub">¼W, 5%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-group">
+          <div class="palette-group-label">Input</div>
+
+          <div class="palette-item" data-component="button" title="Pushbutton — click to press while simulation runs">
+            <div class="palette-item-icon">🔘</div>
+            <div>
+              <div class="palette-item-label">Pushbutton</div>
+              <div class="palette-item-sub">Tactile switch</div>
+            </div>
+          </div>
+
+          <div class="palette-item" data-component="potentiometer" title="Potentiometer — scroll wheel to adjust value">
+            <div class="palette-item-icon">🎚️</div>
+            <div>
+              <div class="palette-item-label">Potentiometer</div>
+              <div class="palette-item-sub">10kΩ, 0–3.3V</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="palette-group">
+          <div class="palette-group-label">Output</div>
+
+          <div class="palette-item" data-component="buzzer" title="Active buzzer — plays tone when powered">
+            <div class="palette-item-icon">🔊</div>
+            <div>
+              <div class="palette-item-label">Buzzer</div>
+              <div class="palette-item-sub">Active, 5V</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="palette-hint">
+        <strong>Click</strong> to select · <strong>Click canvas</strong> to place<br>
+        <strong>Click pin</strong> to wire · <strong>Right-click</strong> to delete<br>
+        <strong>Drag</strong> to move (stopped only)
+      </div>
+    </aside>
+
+    <!-- Center: Canvas -->
+    <main class="canvas-wrap" id="canvas-wrap">
+      <canvas id="simCanvas"></canvas>
+    </main>
+
+    <!-- Right: Code editor + Serial monitor -->
+    <aside class="right-panel">
+      <div class="editor-section">
+        <div class="panel-header">
+          <span class="panel-title">Code Editor</span>
+          <span class="panel-tab">sketch.ino</span>
+        </div>
+        <textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off">// ESP32-S3-N16R8 Blink Example
+// 16MB Flash + 8MB Octal PSRAM
+// Note: GPIO 35, 36, 37 are reserved for Octal PSRAM — do not use!
+//
+// Wiring: LED anode → GPIO4
+//         GPIO4 → [220Ω resistor] → LED cathode → GND
+
+#define LED_PIN 4
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+  Serial.println("ESP32-S3-N16R8 ready!");
+  Serial.println("16MB Flash | 8MB OPI PSRAM");
+}
+
+void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  Serial.println("LED ON");
+  delay(1000);
+
+  digitalWrite(LED_PIN, LOW);
+  Serial.println("LED OFF");
+  delay(1000);
+}</textarea>
+      </div>
+
+      <div class="serial-section">
+        <div class="serial-header">
+          <span class="serial-title">Serial Monitor</span>
+          <button id="btn-serial-clear" class="serial-clear">Clear</button>
+        </div>
+        <div id="serial-output" class="serial-output">
+          <div class="serial-empty">Serial output will appear here…</div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="sim-tooltip" id="tooltip"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
